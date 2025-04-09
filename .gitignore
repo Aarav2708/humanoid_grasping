@@ -4,3 +4,5 @@ checkpoints/*
 **/*.pyc
 **/__pycache__
 .vscode
+test_data
+sam_vit_h.pth
