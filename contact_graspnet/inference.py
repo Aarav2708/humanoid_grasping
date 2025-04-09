@@ -5,8 +5,10 @@ import numpy as np
 import time
 import glob
 import cv2
-
+import pathlib
 import tensorflow.compat.v1 as tf
+
+
 tf.disable_eager_execution()
 physical_devices = tf.config.experimental.list_physical_devices('GPU')
 tf.config.experimental.set_memory_growth(physical_devices[0], True)
@@ -87,7 +89,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--ckpt_dir', default='checkpoints/scene_test_2048_bs3_hor_sigma_001', help='Log dir [default: checkpoints/scene_test_2048_bs3_hor_sigma_001]')
-    parser.add_argument('--np_path', default='test_data/7.npy', help='Input data: npz/npy file with keys either "depth" & camera matrix "K" or just point cloud "pc" in meters. Optionally, a 2D "segmap"')
+    parser.add_argument('--np_path', default='/home/hpm-mv/parent_graspnet/contact_graspnet/robot/captured_data/duster.npy', help='Input data: npz/npy file with keys either "depth" & camera matrix "K" or just point cloud "pc" in meters. Optionally, a 2D "segmap"')
     parser.add_argument('--png_path', default='', help='Input data: depth map png in meters')
     parser.add_argument('--K', default=None, help='Flat Camera Matrix, pass as "[fx, 0, cx, 0, fy, cy, 0, 0 ,1]"')
     parser.add_argument('--z_range', default=[0.2,1.8], help='Z value threshold to crop the input point cloud')
@@ -108,3 +110,22 @@ if __name__ == "__main__":
                 K=FLAGS.K, local_regions=FLAGS.local_regions, filter_grasps=FLAGS.filter_grasps, segmap_id=FLAGS.segmap_id, 
                 forward_passes=FLAGS.forward_passes, skip_border_objects=FLAGS.skip_border_objects)
 
+    filepath = pathlib.Path(__file__)
+
+    # read the predictions for the 'scene.npz' file
+    grasp_predictions_file = filepath.parents[1] / "results" / "predictions_current.npz"
+    grasp_predictions_dict = np.load(grasp_predictions_file, allow_pickle=True)
+    grasp_predictions_in_camera_frame = grasp_predictions_dict["pred_grasps_cam"]
+
+    # dict as np array, need to get object first and then select dict key for segmask
+    grasp_predictions_in_camera_frame = grasp_predictions_in_camera_frame.item()[1]
+
+    grasp_scores = grasp_predictions_dict["scores"]
+
+    # dict as np array, need to get object first and then select dict key
+    grasp_scores = grasp_scores.item()[1]
+
+    highest_idx = np.argmax(grasp_scores)
+    best_grasp_in_camera_frame = grasp_predictions_in_camera_frame[highest_idx]
+
+    print(best_grasp_in_camera_frame)

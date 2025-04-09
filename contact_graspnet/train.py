@@ -187,7 +187,7 @@ def eval_validation_scenes(sess, ops, summary_ops, file_writers, pcreader, max_e
 if __name__ == "__main__":
     
     parser = argparse.ArgumentParser()
-    parser.add_argument('--ckpt_dir', default='checkpoints/contact_graspnet', help='Checkpoint dir')
+    parser.add_argument('--ckpt_dir', default='checkpoints/contact_graspnet_train_and_test', help='Checkpoint dir')
     parser.add_argument('--data_path', type=str, default=None, help='Grasp data root dir')
     parser.add_argument('--max_epoch', type=int, default=None, help='Epochs to run')
     parser.add_argument('--batch_size', type=int, default=None, help='Batch Size during training')

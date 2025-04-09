@@ -1,0 +1,13 @@
+http://download.cs.stanford.edu/orion/Shapenet_Manifold/03636649.zip
+http://download.cs.stanford.edu/orion/Shapenet_Manifold/02828884.zip
+http://download.cs.stanford.edu/orion/Shapenet_Manifold/04530566.zip
+http://download.cs.stanford.edu/orion/Shapenet_Manifold/04379243.zip
+http://download.cs.stanford.edu/orion/Shapenet_Manifold/02933112.zip
+http://download.cs.stanford.edu/orion/Shapenet_Manifold/04401088.zip
+http://download.cs.stanford.edu/orion/Shapenet_Manifold/03001627.zip
+http://download.cs.stanford.edu/orion/Shapenet_Manifold/02958343.zip
+http://download.cs.stanford.edu/orion/Shapenet_Manifold/03691459.zip
+http://download.cs.stanford.edu/orion/Shapenet_Manifold/03211117.zip
+http://download.cs.stanford.edu/orion/Shapenet_Manifold/02691156.zip
+http://download.cs.stanford.edu/orion/Shapenet_Manifold/04256520.zip
+http://download.cs.stanford.edu/orion/Shapenet_Manifold/04090263.zip

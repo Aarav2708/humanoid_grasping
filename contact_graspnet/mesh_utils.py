@@ -176,7 +176,7 @@ def create_gripper(name, configuration=None, root_folder=os.path.dirname(os.path
 
     Arguments:
         name {str} -- name of the gripper
-
+visual
     Keyword Arguments:
         configuration {list of float} -- configuration (default: {None})
         root_folder {str} -- base folder for model files (default: {''})
