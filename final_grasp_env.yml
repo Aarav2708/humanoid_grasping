@@ -1,8 +1,10 @@
-name: base
+name: graspnet_env
 channels:
   - defaults
   - anaconda
   - conda-forge
+  - https://repo.anaconda.com/pkgs/main
+  - https://repo.anaconda.com/pkgs/r
 dependencies:
   - _libgcc_mutex=0.1=conda_forge
   - _openmp_mutex=4.5=2_gnu
@@ -161,4 +163,4 @@ dependencies:
       - werkzeug==3.1.3
       - wrapt==1.12.1
       - zipp==3.21.0
-
+prefix: /home/hpm-mv/miniconda3

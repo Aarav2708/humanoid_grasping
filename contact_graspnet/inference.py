@@ -7,6 +7,8 @@ import glob
 import cv2
 import pathlib
 import tensorflow.compat.v1 as tf
+import json
+from scipy.spatial.transform import Rotation as R
 
 
 tf.disable_eager_execution()
@@ -129,3 +131,32 @@ if __name__ == "__main__":
     best_grasp_in_camera_frame = grasp_predictions_in_camera_frame[highest_idx]
 
     print(best_grasp_in_camera_frame)
+        # Extract translation (x, y, z)
+    translation = best_grasp_in_camera_frame[:3, 3].tolist()
+
+    # Extract rotation matrix and convert to quaternion
+    rotation_matrix = best_grasp_in_camera_frame[:3, :3]
+    rotation = R.from_matrix(rotation_matrix)
+    quaternion = rotation.as_quat().tolist()  # [x, y, z, w]
+
+    # Prepare dictionary to save
+    grasp_dict = {
+        "translation": {
+            "x": translation[0],
+            "y": translation[1],
+            "z": translation[2]
+        },
+        "quaternion": {
+            "x": quaternion[0],
+            "y": quaternion[1],
+            "z": quaternion[2],
+            "w": quaternion[3]
+        }
+    }
+
+    # Save to JSON
+    json_path = filepath.parents[1] / "best_grasp_pose.json"
+    with open(json_path, 'w') as f:
+        json.dump(grasp_dict, f, indent=4)
+
+    print(f"Saved best grasp pose to {json_path}")
