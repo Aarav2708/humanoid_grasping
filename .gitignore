@@ -6,3 +6,5 @@ checkpoints/*
 .vscode
 test_data
 sam_vit_h.pth
+sam_vit_b.pth
+cuda-keyring_1.1-1_all.deb
