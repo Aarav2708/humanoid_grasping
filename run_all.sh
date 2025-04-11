@@ -29,9 +29,7 @@ conda deactivate
 # Step 3: Contact-GraspNet inference
 echo "[INFO] Running Contact-GraspNet..."
 conda activate contact_graspnet
-python contact_graspnet/inference.py \
-       --np_path=captured_data/current.npy \
-       --local_regions --filter_grasps
+python contact_graspnet/inference.py
 conda deactivate
 
 # Step 4: Extract best grasp and send goal to robot

@@ -1,0 +1,12 @@
+[
+  {
+    "action": "pick_and_place",
+    "object": "mug",
+    "destination": "pen stand"
+  },
+  {
+    "action": "pick_and_place",
+    "object": "bottle",
+    "destination": "pen stand"
+  }
+]

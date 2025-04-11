@@ -11,11 +11,18 @@ processor = AutoProcessor.from_pretrained("omlab/omdet-turbo-swin-tiny-hf")
 model = OmDetTurboForObjectDetection.from_pretrained("omlab/omdet-turbo-swin-tiny-hf")
 model.eval()
 
+# Load object list from task.json
+with open("object_list.json", "r") as f:
+    task_list = json.load(f)
+
 # Start RealSense pipeline
 pipeline = rs.pipeline()
 config = rs.config()
 config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
 pipeline.start(config)
+
+# Prepare to collect bounding boxes
+all_boxes = {}
 
 try:
     # Warm up the camera
@@ -27,68 +34,165 @@ try:
     color_frame = frames.get_color_frame()
     if not color_frame:
         raise RuntimeError("No frame captured from RealSense.")
-
+    
     # Convert to OpenCV and PIL
     color_image = np.asanyarray(color_frame.get_data())
     image_pil = Image.fromarray(cv2.cvtColor(color_image, cv2.COLOR_BGR2RGB))
 
-    # Text label to detect
-    input_text = input("Enter the object to grasp: ")
-    text_labels = [input_text]
+    for task in task_list:
+        object_name = task["object"]
+        print(f"[INFO] Detecting object: {object_name}")
+        text_labels = [object_name]
 
-    # Run inference
-    inputs = processor(image_pil, text=text_labels, return_tensors="pt")
-    with torch.no_grad():
-        outputs = model(**inputs)
+        # Inference
+        inputs = processor(image_pil, text=text_labels, return_tensors="pt")
+        with torch.no_grad():
+            outputs = model(**inputs)
 
-    # Post-process
-    results = processor.post_process_grounded_object_detection(
-        outputs,
-        target_sizes=[(image_pil.height, image_pil.width)],
-        text_labels=text_labels,
-        threshold=0.3,
-        nms_threshold=0.3,
-    )
+        # Post-process results
+        results = processor.post_process_grounded_object_detection(
+            outputs,
+            target_sizes=[(image_pil.height, image_pil.width)],
+            text_labels=text_labels,
+            threshold=0.3,
+            nms_threshold=0.3,
+        )
 
-    result = results[0]
-    boxes, scores, labels = result["boxes"], result["scores"], result["text_labels"]
+        result = results[0]
+        boxes, scores, labels = result["boxes"], result["scores"], result["text_labels"]
 
-    if boxes.numel() == 0:
-        print("No objects detected.")
-    else:
-        # Get best detection
-        max_idx = scores.argmax().item()
-        box = [round(v, 2) for v in boxes[max_idx].tolist()]
-        label = labels[max_idx]
-        confidence = round(scores[max_idx].item(), 3)
+        if boxes.numel() == 0:
+            print(f"[WARNING] No detection found for: {object_name}")
+            all_boxes[object_name] = None
+        else:
+            max_idx = scores.argmax().item()
+            box = [round(v, 2) for v in boxes[max_idx].tolist()]
+            label = labels[max_idx]
+            confidence = round(scores[max_idx].item(), 3)
 
-        # Save bounding box info to JSON
-        bbox_data = {
-            "label": label,
-            "confidence": confidence,
-            "box": {
-                "x1": box[0],
-                "y1": box[1],
-                "x2": box[2],
-                "y2": box[3]
+            print(f"[SUCCESS] Detected {label} with confidence {confidence}")
+
+            all_boxes[object_name] = {
+                "label": label,
+                "confidence": confidence,
+                "box": {
+                    "x1": box[0],
+                    "y1": box[1],
+                    "x2": box[2],
+                    "y2": box[3]
+                }
             }
-        }
-        with open("bounding_box.json", "w") as f:
-            json.dump(bbox_data, f, indent=4)
 
-        # Draw on image
-        x1, y1, x2, y2 = map(int, box)
-        cv2.rectangle(color_image, (x1, y1), (x2, y2), (0, 255, 0), 2)
-        cv2.putText(color_image, f"{label} {confidence:.2f}", (x1, y1 - 10),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
+            # Draw bounding box
+            x1, y1, x2, y2 = map(int, box)
+            cv2.rectangle(color_image, (x1, y1), (x2, y2), (0, 255, 0), 2)
+            cv2.putText(color_image, f"{label} {confidence:.2f}", (x1, y1 - 10),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
 
-        # Show image for 3 seconds
-        cv2.imshow("Best Detection", color_image)
-        cv2.waitKey(3000)
-        cv2.destroyAllWindows()
+    # Save all bounding boxes
+    with open("bounding_boxes.json", "w") as f:
+        json.dump(all_boxes, f, indent=4)
+
+    # Show image with all boxes
+    cv2.imshow("Detections", color_image)
+    cv2.waitKey(3000)
+    cv2.destroyAllWindows()
 
 finally:
     pipeline.stop()
+
+
+# import pyrealsense2 as rs
+# import numpy as np
+# import cv2
+# import torch
+# import json
+# from PIL import Image
+# from transformers import AutoProcessor, OmDetTurboForObjectDetection
+
+# # Load model and processor
+# processor = AutoProcessor.from_pretrained("omlab/omdet-turbo-swin-tiny-hf")
+# model = OmDetTurboForObjectDetection.from_pretrained("omlab/omdet-turbo-swin-tiny-hf")
+# model.eval()
+
+# # Start RealSense pipeline
+# pipeline = rs.pipeline()
+# config = rs.config()
+# config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
+# pipeline.start(config)
+
+# try:
+#     # Warm up the camera
+#     for _ in range(30):
+#         pipeline.wait_for_frames()
+
+#     # Capture one frame
+#     frames = pipeline.wait_for_frames()
+#     color_frame = frames.get_color_frame()
+#     if not color_frame:
+#         raise RuntimeError("No frame captured from RealSense.")
+
+#     # Convert to OpenCV and PIL
+#     color_image = np.asanyarray(color_frame.get_data())
+#     image_pil = Image.fromarray(cv2.cvtColor(color_image, cv2.COLOR_BGR2RGB))
+
+#     # Text label to detect
+#     input_text = input("Enter the object to grasp: ")
+#     text_labels = [input_text]
+
+#     # Run inference
+#     inputs = processor(image_pil, text=text_labels, return_tensors="pt")
+#     with torch.no_grad():
+#         outputs = model(**inputs)
+
+#     # Post-process
+#     results = processor.post_process_grounded_object_detection(
+#         outputs,
+#         target_sizes=[(image_pil.height, image_pil.width)],
+#         text_labels=text_labels,
+#         threshold=0.3,
+#         nms_threshold=0.3,
+#     )
+
+#     result = results[0]
+#     boxes, scores, labels = result["boxes"], result["scores"], result["text_labels"]
+
+#     if boxes.numel() == 0:
+#         print("No objects detected.")
+#     else:
+#         # Get best detection
+#         max_idx = scores.argmax().item()
+#         box = [round(v, 2) for v in boxes[max_idx].tolist()]
+#         label = labels[max_idx]
+#         confidence = round(scores[max_idx].item(), 3)
+
+#         # Save bounding box info to JSON
+#         bbox_data = {
+#             "label": label,
+#             "confidence": confidence,
+#             "box": {
+#                 "x1": box[0],
+#                 "y1": box[1],
+#                 "x2": box[2],
+#                 "y2": box[3]
+#             }
+#         }
+#         with open("bounding_box.json", "w") as f:
+#             json.dump(bbox_data, f, indent=4)
+
+#         # Draw on image
+#         x1, y1, x2, y2 = map(int, box)
+#         cv2.rectangle(color_image, (x1, y1), (x2, y2), (0, 255, 0), 2)
+#         cv2.putText(color_image, f"{label} {confidence:.2f}", (x1, y1 - 10),
+#                     cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
+
+#         # Show image for 3 seconds
+#         cv2.imshow("Best Detection", color_image)
+#         cv2.waitKey(3000)
+#         cv2.destroyAllWindows()
+
+# finally:
+#     pipeline.stop()
 
 
 
