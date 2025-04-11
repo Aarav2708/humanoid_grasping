@@ -80,11 +80,12 @@ for obj_name, obj_data in multi_object_data.items():
     print("[INFO] Visualizing best grasp...")
     visualize_grasps(
     pc_full,
-    pred_grasps_cam={1: np.array([best_grasp])},  # <-- convert to array
-    scores={1: np.array([scores[1][best_idx]])},  # <-- convert to array
+    pred_grasps_cam={1: np.array(pred_grasps_cam[1])},
+    scores={1: np.array(scores[1])},
     plot_opencv_cam=True,
     pc_colors=pc_colors
 )
+
 
 
     # Extract translation
