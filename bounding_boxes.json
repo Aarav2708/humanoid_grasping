@@ -1,12 +1,22 @@
 {
-    "mug": {
-        "label": "mug",
-        "confidence": 0.834,
+    "red cup": {
+        "label": "red cup",
+        "confidence": 0.329,
         "box": {
-            "x1": 438.3,
-            "y1": 269.5,
-            "x2": 506.72,
-            "y2": 350.97
+            "x1": 438.25,
+            "y1": 268.2,
+            "x2": 507.69,
+            "y2": 350.59
+        }
+    },
+    "green bottle": {
+        "label": "green bottle",
+        "confidence": 0.688,
+        "box": {
+            "x1": 368.17,
+            "y1": 296.2,
+            "x2": 447.8,
+            "y2": 479.08
         }
     }
 }

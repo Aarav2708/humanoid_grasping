@@ -16,6 +16,8 @@ unset __conda_setup
 # Step 1: Run SAM and Zero-shot
 echo "[INFO] Running SAM and ZERO-SHOT RECOGNITION..."
 conda activate sam_env
+export QT_QPA_PLATFORM=xcb
+export DISPLAY=:1
 python3 /home/hpm-mv/parent_graspnet/humanoid_grasping/zeroshot.py
 python3 /home/hpm-mv/parent_graspnet/humanoid_grasping/sam_deploy.py
 conda deactivate
