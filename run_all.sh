@@ -16,20 +16,20 @@ unset __conda_setup
 # Step 1: Run SAM and Zero-shot
 echo "[INFO] Running SAM and ZERO-SHOT RECOGNITION..."
 conda activate sam_env
-python3 zeroshot.py
-python3 sam_deploy.py
+python3 /home/hpm-mv/parent_graspnet/humanoid_grasping/zeroshot.py
+python3 /home/hpm-mv/parent_graspnet/humanoid_grasping/sam_deploy.py
 conda deactivate
 
 # Step 2: Save RGB-D + segmentation
 echo "[INFO] Saving RGB-D + Segmentation Mask..."
 conda activate airo-mono
-python3 robot/save_npy.py
+python3 /home/hpm-mv/parent_graspnet/humanoid_grasping/robot/save_npy.py
 conda deactivate
 
 # Step 3: Contact-GraspNet inference
 echo "[INFO] Running Contact-GraspNet..."
 conda activate contact_graspnet
-python contact_graspnet/inference.py
+python3 /home/hpm-mv/parent_graspnet/humanoid_grasping/contact_graspnet/inference.py
 conda deactivate
 
 # Step 4: Extract best grasp and send goal to robot
