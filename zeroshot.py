@@ -12,7 +12,7 @@ model = OmDetTurboForObjectDetection.from_pretrained("omlab/omdet-turbo-swin-tin
 model.eval()
 
 # Load object list from task.json
-with open("object_list.json", "r") as f:
+with open("/home/hpm-mv/Hardik/FINAL_TRIAL/action_data/action.json", "r") as f:
     task_list = json.load(f)
 
 # Start RealSense pipeline
