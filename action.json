@@ -1,0 +1,17 @@
+[
+    {
+      "action": "pick_and_place",
+      "object": "coffee cup",
+      "destination": "next to blue book"
+    },
+    {
+      "action": "pick_and_place",
+      "object": "water bottle",
+      "destination": "table"
+    },
+    {
+        "action": "pick_and_place",
+        "object": "yellow box",
+        "destination": "table"
+    }
+  ]

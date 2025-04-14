@@ -1,22 +1,32 @@
 {
-    "cup": {
-        "label": "cup",
-        "confidence": 0.949,
+    "yellow box": {
+        "label": "yellow box",
+        "confidence": 0.742,
         "box": {
-            "x1": 273.47,
-            "y1": 327.85,
-            "x2": 335.51,
-            "y2": 395.44
+            "x1": 237.6,
+            "y1": 374.5,
+            "x2": 320.48,
+            "y2": 458.56
         }
     },
-    "bottle": {
-        "label": "bottle",
-        "confidence": 0.943,
+    "water bottle": {
+        "label": "water bottle",
+        "confidence": 0.676,
         "box": {
-            "x1": 168.11,
-            "y1": 235.34,
-            "x2": 211.65,
-            "y2": 387.21
+            "x1": 68.45,
+            "y1": 255.96,
+            "x2": 140.16,
+            "y2": 432.76
+        }
+    },
+    "coffee cup": {
+        "label": "coffee cup",
+        "confidence": 0.434,
+        "box": {
+            "x1": 329.96,
+            "y1": 320.18,
+            "x2": 384.01,
+            "y2": 394.76
         }
     }
 }

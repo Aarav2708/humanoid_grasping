@@ -1,19 +1,18 @@
-name: zeroshot_env
+name: zshot
 channels:
-  - pytorch
-  - conda-forge
   - defaults
-
+  - conda-forge
 dependencies:
   - python=3.9
   - pip
-  - numpy
-  - opencv
-  - matplotlib
-  - pytorch
-  - torchvision
-  - torchaudio
-  - cudatoolkit=11.8  # Match your CUDA version; or remove if using CPU
   - pip:
+      - torch==2.2.2
+      - torchvision==0.17.2
+      - torchaudio==2.2.2
       - pyrealsense2
-      - segment-anything
+      - numpy
+      - opencv-python
+      - matplotlib
+      - pillow
+      - tqdm
+      - transformers
