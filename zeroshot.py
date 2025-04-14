@@ -54,7 +54,7 @@ try:
             outputs,
             target_sizes=[(image_pil.height, image_pil.width)],
             text_labels=text_labels,
-            threshold=0.3,
+            threshold=0.,
             nms_threshold=0.3,
         )
 

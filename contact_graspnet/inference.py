@@ -100,11 +100,43 @@ for obj_name, obj_data in multi_object_data.items():
         "quaternion": {"x": quaternion[0], "y": quaternion[1], "z": quaternion[2], "w": quaternion[3]}
     }
 
-# ========== Save Final JSON ==========
-with open(output_json, "w") as f:
-    json.dump(results_json, f, indent=4)
+    from scipy.spatial.transform import Rotation as R
+    # Create the original rotation from the quaternion
+    original_rot = R.from_quat(quaternion)
 
-print(f"\n✅ All best grasp poses saved to: {output_json}")
+    # Define the additional rotations
+    rot_x_90 = R.from_euler('x', 90, degrees=True)
+    rot_z_90 = R.from_euler('z', 90, degrees=True)
+
+    # Apply the rotations: first X, then Z
+    combined_rot = rot_z_90 * rot_x_90 * original_rot
+
+    # Rotate the translation vector
+    rotated_translation = (rot_z_90 * rot_x_90).apply(translation)
+
+    # Get the new quaternion
+    new_quat = combined_rot.as_quat()  # [x, y, z, w]
+
+    # Format the output
+    results_json[obj_name] = {
+        "translation": {
+            "x": rotated_translation[0],
+            "y": rotated_translation[1],
+            "z": rotated_translation[2]
+        },
+        "quaternion": {
+            "x": new_quat[0],
+            "y": new_quat[1],
+            "z": new_quat[2],
+            "w": new_quat[3]
+        }
+    }
+
+    # ========== Save Final JSON ==========
+    with open(output_json, "w") as f:
+        json.dump(results_json, f, indent=4)
+
+    print(f"\n✅ All best grasp poses saved to: {output_json}")
 
 
 # import os

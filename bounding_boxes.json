@@ -1,22 +1,22 @@
 {
-    "red cup": {
-        "label": "red cup",
-        "confidence": 0.329,
+    "cup": {
+        "label": "cup",
+        "confidence": 0.949,
         "box": {
-            "x1": 438.25,
-            "y1": 268.2,
-            "x2": 507.69,
-            "y2": 350.59
+            "x1": 273.47,
+            "y1": 327.85,
+            "x2": 335.51,
+            "y2": 395.44
         }
     },
-    "green bottle": {
-        "label": "green bottle",
-        "confidence": 0.688,
+    "bottle": {
+        "label": "bottle",
+        "confidence": 0.943,
         "box": {
-            "x1": 368.17,
-            "y1": 296.2,
-            "x2": 447.8,
-            "y2": 479.08
+            "x1": 168.11,
+            "y1": 235.34,
+            "x2": 211.65,
+            "y2": 387.21
         }
     }
 }
