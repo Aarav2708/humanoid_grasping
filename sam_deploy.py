@@ -5,6 +5,12 @@ import matplotlib.pyplot as plt
 from segment_anything import sam_model_registry, SamPredictor
 import pyrealsense2 as rs
 import json
+import os
+
+# # Set these environment variables before any other Qt-related imports
+# os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = '/usr/lib/x86_64-linux-gnu/qt5/plugins/platforms'
+# os.environ['QT_PLUGIN_PATH'] = '/usr/lib/x86_64-linux-gnu/qt5/plugins'
+# os.environ['QT_QPA_PLATFORM'] = 'xcb'
 
 # ---------- Step 1: Capture Frame from RealSense ----------
 pipeline = rs.pipeline()
@@ -26,11 +32,11 @@ image_rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
 pipeline.stop()
 
 # ---------- Step 2: Load bounding boxes from JSON ----------
-with open("bounding_boxes.json", "r") as f:
+with open("/home/hpm-mv/parent_graspnet/humanoid_grasping/bounding_boxes.json", "r") as f:
     bbox_dict = json.load(f)
 
 # ---------- Step 3: Load SAM and initialize predictor ----------
-sam_checkpoint = "sam_vit_h.pth"  # Change this path accordingly
+sam_checkpoint = "/home/hpm-mv/parent_graspnet/humanoid_grasping/sam_vit_h.pth"  # Change this path accordingly
 model_type = "vit_h"
 
 sam = sam_model_registry[model_type](checkpoint=sam_checkpoint)
@@ -85,9 +91,10 @@ for obj_name, contours_list in all_waypoints.items():
 
 image_bgr_drawn = cv2.cvtColor(image_to_draw, cv2.COLOR_RGB2BGR)
 
-cv2.imshow("Segmented Waypoints", image_bgr_drawn)
-cv2.waitKey(3000)
-cv2.destroyAllWindows()
+output_path = "/home/hpm-mv/parent_graspnet/humanoid_grasping/segmentation_output.png"
+cv2.imwrite(output_path, image_bgr_drawn)
+print(f"[INFO] Segmented waypoints saved to: {output_path}")
+
 
 
 # import torch

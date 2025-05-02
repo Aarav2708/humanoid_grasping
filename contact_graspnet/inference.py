@@ -1,20 +1,21 @@
 import os
 import json
 import numpy as np
-import pathlib
+# import pathlib
 from scipy.spatial.transform import Rotation as R
 
 import config_utils
 from contact_grasp_estimator import GraspEstimator
-from visualization_utils import visualize_grasps, show_image
+# from visualization_utils import visualize_grasps, show_image
 import tensorflow.compat.v1 as tf
 tf.disable_eager_execution()
 
+
 # ========== Configuration ==========
-ckpt_dir = "checkpoints/scene_test_2048_bs3_hor_sigma_001"
-multi_object_npy = "captured_data/multi_object_data.npy"
-output_json = "best_grasp_pose.json"
-temp_input = "temp_input.npz"
+ckpt_dir = "/home/hpm-mv/parent_graspnet/humanoid_grasping/checkpoints/scene_test_2048_bs3_hor_sigma_001"
+multi_object_npy = "/home/hpm-mv/parent_graspnet/humanoid_grasping/captured_data/multi_object_data.npy"
+output_json = "/home/hpm-mv/parent_graspnet/humanoid_grasping/best_grasp_pose.json"
+temp_input = "/home/hpm-mv/parent_graspnet/humanoid_grasping/temp_input.npz"
 
 # ========== Load Config ==========
 global_config = config_utils.load_config(ckpt_dir, batch_size=1)
@@ -76,15 +77,14 @@ for obj_name, obj_data in multi_object_data.items():
 
     best_idx = np.argmax(scores[1])
     best_grasp = pred_grasps_cam[1][best_idx]
-     # ========== ✅ Visualize best grasp ==========
-    print("[INFO] Visualizing best grasp...")
-    visualize_grasps(
-    pc_full,
-    pred_grasps_cam={1: np.array(pred_grasps_cam[1])},
-    scores={1: np.array(scores[1])},
-    plot_opencv_cam=True,
-    pc_colors=pc_colors
-)
+    #  # ========== ✅ Visualize best grasp ==========
+    # print("[INFO] Visualizing best grasp...")
+    # visualize_grasps(
+    # pc_full,
+    # pred_grasps_cam={1: np.array(pred_grasps_cam[1])},
+    # scores={1: np.array(scores[1])},
+    # plot_opencv_cam=True,
+    # pc_colors=pc_colors)
 
 
 
@@ -105,8 +105,8 @@ for obj_name, obj_data in multi_object_data.items():
     original_rot = R.from_quat(quaternion)
 
     # Define the additional rotations
-    rot_x_90 = R.from_euler('x', 90, degrees=True)
-    rot_z_90 = R.from_euler('z', 90, degrees=True)
+    rot_x_90 = R.from_euler('x', 0, degrees=True)
+    rot_z_90 = R.from_euler('z', 0, degrees=True)
 
     # Apply the rotations: first X, then Z
     combined_rot = rot_z_90 * rot_x_90 * original_rot

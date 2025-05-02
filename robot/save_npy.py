@@ -49,7 +49,7 @@ K = np.array([[intrinsics.fx, 0, intrinsics.ppx],
 rgb = ImageConverter.from_numpy_format(rgb.astype(np.float32) / 255.0).image_in_opencv_format
 
 # ---------- Load Segmentation Waypoints ----------
-with open("./segmented_waypoints.json", "r") as f:
+with open("/home/hpm-mv/parent_graspnet/humanoid_grasping/segmented_waypoints.json", "r") as f:
     all_waypoints = json.load(f)
 
 # ---------- Build Dataset for All Objects ----------

@@ -7,7 +7,7 @@ import cv2
 from transformers import AutoProcessor, GroundingDinoForObjectDetection
 
 # --- Load action.json ---
-with open("action.json", "r") as f:
+with open("/home/hpm-mv/Hardik/FINAL_TRIAL/action_data/action.json", "r") as f:
     tasks = json.load(f)
 objects = list(set([task["object"] for task in tasks]))
 prompt = ". ".join(objects) + "."
@@ -74,6 +74,6 @@ with open("bounding_boxes.json", "w") as f:
 print("[INFO] Saved bounding boxes to bounding_boxes.json")
 
 # --- Show image for 3 seconds only ---
-cv2.imshow("Detections", color_image)
-cv2.waitKey(3000)
-cv2.destroyAllWindows()
+output_path = "/home/hpm-mv/parent_graspnet/humanoid_grasping/detected_objects.png"
+cv2.imwrite(output_path, color_image)
+print(f"[INFO] Segmented waypoints saved to: {output_path}")

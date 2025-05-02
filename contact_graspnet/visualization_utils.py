@@ -84,7 +84,7 @@ def visualize_grasps(full_pc, pred_grasps_cam, scores, plot_opencv_cam=False, pc
     print('Visualizing...takes time')
     cm = plt.get_cmap('rainbow')
     cm2 = plt.get_cmap('gist_rainbow')
-   
+    
     fig = mlab.figure('Pred Grasps')
     mlab.view(azimuth=180, elevation=180, distance=0.2)
     draw_pc_with_colors(full_pc, pc_colors)

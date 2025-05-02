@@ -8,10 +8,5 @@
       "action": "pick_and_place",
       "object": "water bottle",
       "destination": "table"
-    },
-    {
-        "action": "pick_and_place",
-        "object": "yellow box",
-        "destination": "table"
     }
   ]
