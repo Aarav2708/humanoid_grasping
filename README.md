@@ -14,10 +14,33 @@ ICRA 2021
 
 This code has been tested with python 3.7, tensorflow 2.2, CUDA 11.1
 
-Create the conda env
+1.Create a conda env called zshot using:
+  ```shell
+  conda env create -f zeroshot_env.yml
+  ```
+2.Follow the instructions given [here](https://github.com/airo-ugent/airo-mono) and create a conda env called airo-mono.
+
+  Create a conda env called sam_env using
+  ```shell
+  conda env create -f sam_env.yml
+  ```
+3.Add weights for the [sam_model](https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth) 
+
+4.Create a conda env called contatct_graspnet using:
+```shell
+conda env create -f contact_graspnet.yml
 ```
-conda env create -f contact_graspnet_env.yml
+5.Before running the pipeline, check camera using:
+```shell
+conda activate airo_mono
+python3 robot/check_camera.py
 ```
+6.Now, finally run the pipeline using
+```shell
+bash run_all.sh
+```
+
+
 
 ### Troubleshooting
 
@@ -36,94 +59,7 @@ Download trained models from [here](https://drive.google.com/drive/folders/1tBHK
 ### Test data
 Download the test data from [here](https://drive.google.com/drive/folders/1TqpM2wHAAo0j3i1neu3Xeru3_WnsYQnx?usp=sharing) and copy them them into the `test_data/` folder.
 
-## Inference
 
-
-Contact-GraspNet can directly predict a 6-DoF grasp distribution from a raw scene point cloud. However, to obtain object-wise grasps, remove background grasps and to achieve denser proposals it is highly recommended to use (unknown) object segmentation [e.g. [1](https://github.com/chrisdxie/uois), [2](https://arxiv.org/abs/2103.06796)] as preprocessing and then use the resulting segmentation map to crop local regions and filter grasp contacts.
-
-Given a .npy/.npz file with a depth map (in meters), camera matrix K and (optionally) a 2D segmentation map, execute:
-
-```shell
-python contact_graspnet/inference.py \
-       --np_path=test_data/*.npy \
-       --local_regions --filter_grasps
-```
-
-<p align="center">
-  <img src="examples/7.png" width="640" title="UOIS + Contact-GraspNet"/>
-</p>
---> close the window to go to next scene
-
-Given a .npy/.npz file with just a 3D point cloud (in meters), execute [for example](examples/realsense_crop_sigma_001.png):
-```shell
-python contact_graspnet/inference.py --np_path=/path/to/your/pc.npy \
-                                     --forward_passes=5 \
-                                     --z_range=[0.2,1.1]
-```
-
-`--np_path`: input .npz/.npy file(s) with 'depth', 'K' and optionally 'segmap', 'rgb' keys. For processing a Nx3 point cloud instead use 'xzy' and optionally 'xyz_color' as keys.  
-`--ckpt_dir`: relative path to checkpooint directory. By default `checkpoint/scene_test_2048_bs3_hor_sigma_001` is used. For very clean / noisy depth data consider `scene_2048_bs3_rad2_32` / `scene_test_2048_bs3_hor_sigma_0025` trained with no / strong noise.   
-`--local_regions`: Crop 3D local regions around object segments for inference. (only works with segmap)  
-`--filter_grasps`: Filter grasp contacts such that they only lie on the surface of object segments. (only works with segmap)  
-`--skip_border_objects` Ignore segments touching the depth map boundary.  
-`--forward_passes` number of (batched) forward passes. Increase to sample more potential grasp contacts.  
-`--z_range` [min, max] z values in meter used to crop the input point cloud, e.g. to avoid grasps in the foreground/background(as above).  
-`--arg_configs TEST.second_thres:0.19 TEST.first_thres:0.23` Overwrite config confidence thresholds for successful grasp contacts to get more/less grasp proposals 
-
-
-## Training
-
-### Download Data 
-
-Download the Acronym dataset, ShapeNet meshes and make them watertight, following these [steps](https://github.com/NVlabs/acronym#using-the-full-acronym-dataset).
-
-Download the training data consisting of 10000 table top training scenes with contact grasp information from [here](https://drive.google.com/drive/folders/1eeEXAISPaStZyjMX8BHR08cdQY4HF4s0?usp=sharing) and extract it to the same folder:
-
-```
-acronym
-├── grasps
-├── meshes
-├── scene_contacts
-└── splits
-```
-
-### Train Contact-GraspNet
-
-When training on a headless server set the environment variable
-```shell
-export PYOPENGL_PLATFORM='egl'
-```
-
-Start training with config `contact_graspnet/config.yaml`
-```
-python contact_graspnet/train.py --ckpt_dir checkpoints/your_model_name \
-                                 --data_path /path/to/acronym/data
-```
-
-### Generate Contact Grasps and Scenes yourself (optional)
-
-The `scene_contacts` downloaded above are generated from the Acronym dataset. To generate/visualize table-top scenes yourself, also pip install the [acronym_tools]((https://github.com/NVlabs/acronym)) package in your conda environment as described in the acronym repository.
-
-In the first step, object-wise 6-DoF grasps are mapped to their contact points saved in `mesh_contacts`
-
-```
-python tools/create_contact_infos.py /path/to/acronym
-```
-
-From the generated `mesh_contacts` you can create table-top scenes which are saved in `scene_contacts` with
-
-```
-python tools/create_table_top_scenes.py /path/to/acronym
-```
-
-Takes ~3 days in a single thread. Run the command several times to process on multiple cores in parallel.
-
-You can also visualize existing table-top scenes and grasps
-
-```
-python tools/create_table_top_scenes.py /path/to/acronym \
-       --load_existing scene_contacts/000000.npz -vis
-```
 
 ## Citation
 
